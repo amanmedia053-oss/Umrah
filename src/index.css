@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --primary: #F27D26;
+  --primary-foreground: #ffffff;
+}
+
+[data-theme='orange'] { --primary: #F27D26; }
+[data-theme='green'] { --primary: #2E7D32; }
+[data-theme='blue'] { --primary: #0288D1; }
+[data-theme='purple'] { --primary: #7B1FA2; }
+[data-theme='red'] { --primary: #D32F2F; }
+[data-theme='gold'] { --primary: #FFB300; }
+[data-theme='gray'] { --primary: #616161; }
+[data-theme='teal'] { --primary: #00897B; }
+[data-theme='darkgreen'] { --primary: #1B5E20; }
+[data-theme='navy'] { --primary: #1A237E; }
+
+body {
+  @apply bg-slate-50 text-slate-900 transition-colors duration-300;
+  direction: rtl;
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dark body, body.dark {
+  @apply bg-black text-white;
+}
+
+.dark .card, body.dark .card {
+  @apply bg-zinc-950 border-zinc-800;
+}
+
+.dark button, body.dark button {
+  @apply text-white;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
