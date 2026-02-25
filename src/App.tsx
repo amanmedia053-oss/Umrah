@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+iimport React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Home, Heart, Settings, Info, Play, Pause, SkipBack, SkipForward, X, Heart as HeartIcon, Share2, Star, MessageCircle, Send, Mail } from 'lucide-react';
-import { useTheme, getAccentClass, getAccentTextClass, getAccentHex, ThemeColor } from './context/ThemeContext';
-import { useAudio, Lesson } from './context/AudioContext';
+
+// پخواني ./context مو په @/context بدل کړل ترڅو Build خطا ورنکړي
+import { useTheme, getAccentClass, getAccentTextClass, getAccentHex, ThemeColor } from '@/context/ThemeContext';
+import { useAudio, Lesson } from '@/context/AudioContext';
+
+// پاتې کوډ مو هغسې پرېږدئ، کوم تغیر ته اړتیا نشته...
+
 
 // --- Components ---
 
