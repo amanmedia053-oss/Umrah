@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Home, Heart, Settings, Info, Play, Pause, SkipBack, SkipForward, X, Heart as HeartIcon, Share2, Star, MessageCircle, Send, Mail } from 'lucide-react';
 
 // پخواني ./context مو په @/context بدل کړل ترڅو Build خطا ورنکړي
-import { useTheme, getAccentClass, getAccentTextClass, getAccentHex, ThemeColor } from '@/context/ThemeContext';
-import { useAudio, Lesson } from '@/context/AudioContext';
+import { useTheme, getAccentClass, getAccentTextClass, getAccentHex, ThemeColor } from './context/ThemeContext';
+import { useAudio, Lesson } from './context/AudioContext';
 
 // پاتې کوډ مو هغسې پرېږدئ، کوم تغیر ته اړتیا نشته...
 
