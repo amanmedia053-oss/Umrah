@@ -11,77 +11,82 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ۱. جاوا ۲۱ (د Gradle د ستونزو لپاره)
+      # ۱. د جاوا تنظیمول
       - name: set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
 
+      # ۲. د Sharp لپاره د اړینې لایبررۍ (libvips) نصبول
+      - name: Install libvips for sharp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
+
+      # ۳. د ډیپنډنسيګانو نصبول
       - name: Install dependencies
         run: |
           npm install
-          # د Capacitor اړین کتابتونونه انسټالول
+          # د Capacitor اړین کتابتونونه
           npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets @capacitor/share @capacitor/filesystem
 
+      # ۴. د ویب اپلیکیشن جوړول
       - name: Build Web App
         run: npm run build
 
+      # ۵. له Capacitor سره همغږي کول
       - name: Sync with Capacitor
         run: |
-          # د عمرې لارښود نوم او خپل Package ID مو ورکړ
           npx cap init "د عمرې لارښود" "com.amanmedia.umrah" --web-dir dist
           npx cap add android
           npx cap sync android
 
-      # ۲. د آیکن برخه (اصلاح شوې)
+      # ۶. د آیکن جوړول (اصلاح شوې برخه)
       - name: Generate Icon
         run: |
           if [ -f "logo.png" ]; then
             mkdir -p assets
-            # دلته مو logo.png په icon.png بدل کړ ترڅو capacitor-assets یې وپیژني
             cp logo.png assets/icon.png
+            # د --icon-only بیرغ کارول که یوازې آیکن غواړئ، یا په نورمال ډول:
             npx capacitor-assets generate --android
           else
             echo "Warning: logo.png not found, skipping icon generation."
           fi
 
-      # ۳. د انټرنیټ او سټوریج اجازې (Permissions)
-      # یادونه: ستاسو په اپلیکیشن کې آډیو له انټرنیټ څخه غږول کیږي، نو د انټرنیټ اجازه ډېره اړینه ده.
+      # ۷. د انټرنیټ او سټوریج اجازې (Permissions)
       - name: Inject Permissions and Fix Name
         run: |
           cd android/app/src/main
-          
-          # په AndroidManifest.xml کې د انټرنیټ او سټوریج اجازې ورزیاتوو
+          # د انټرنیټ او سټوریج اجازې اضافه کول
           sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"\/>\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/>\n    <application/g' AndroidManifest.xml
-          
-          # د ډاونلوډ لپاره "ClearText" او "Legacy Storage" فعاله کوو
+          # د ClearText او Legacy Storage فعالول
           sed -i 's/<application/<application android:usesCleartextTraffic="true" android:requestLegacyExternalStorage="true"/g' AndroidManifest.xml
-          
-          # د ډاډ لپاره د فایل چاپول
-          cat AndroidManifest.xml
 
-      # ۴. د Kotlin د تکراري فایلونو ستونزه (Fix)
+      # ۸. د Kotlin د تکراري فایلونو د ستونزې حل (Resolution Strategy)
       - name: Fix Kotlin Dependency Conflict
         run: |
           cd android
-          echo "" >> build.gradle
-          echo "allprojects {" >> build.gradle
-          echo "    configurations.all {" >> build.gradle
-          echo "        resolutionStrategy {" >> build.gradle
-          echo "            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'" >> build.gradle
-          echo "            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'" >> build.gradle
-          echo "            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'" >> build.gradle
-          echo "        }" >> build.gradle
-          echo "    }" >> build.gradle
-          echo "}" >> build.gradle
+          cat >> build.gradle <<EOF
+          allprojects {
+              configurations.all {
+                  resolutionStrategy {
+                      force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+                      force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+                      force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+                  }
+              }
+          }
+          EOF
 
+      # ۹. د APK فایل جوړول
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      # ۱۰. د APK پورته کول (Artifact)
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
