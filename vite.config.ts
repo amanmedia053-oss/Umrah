@@ -1,9 +1,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig(({mode}) => {
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     base: './',
@@ -13,7 +13,7 @@ export default defineConfig(({mode}) => {
     },
     resolve: {
       alias: {
-        // دا برخه اصلاح شوه ترڅو په مستقیم ډول 'src' فولډر ته اشاره وکړي
+        // دا برخه ډاډ ترلاسه کوي چې '@' مستقیم 'src' فولډر ته ځي
         '@': path.resolve(__dirname, './src'),
       },
     },
